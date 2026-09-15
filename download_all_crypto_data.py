@@ -35,8 +35,7 @@ def download_binance_1m(symbol: str = "BTCUSDT", start: str = "2026-09-05") -> p
             try:
                 data.raise_for_status()
             except Exception as e:
-                with open('errors.txt', 'a') as fp:
-                    fp.write(f'{e} on {symbol}\n')
+                print(f'{e} on {symbol}\n')
             data = [i[:-1] for i in data.json()]
             rows.extend(data)
 
