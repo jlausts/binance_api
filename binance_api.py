@@ -130,11 +130,11 @@ class CryptoBinance:
         ts = (date / pd.to_datetime(time.time(), unit='s').strftime("%H_%M")).with_suffix('.xz')
         self.get_snapshot().to_pickle(ts)
 
-    def update_one_ticker(self, symbol: Path):
+    def update_one_ticker(self, symbol: Path, use_tqdm=False):
             if symbol.name.startswith('_'): return
             df = pd.read_pickle(symbol)
             start = df.iloc[-1].name.strftime('%Y-%m-%d')
-            df = pd.concat([df, self.download_one_ticker_1m(symbol.stem, start, use_tqdm=False)])
+            df = pd.concat([df, self.download_one_ticker_1m(symbol.stem, start, use_tqdm=tqdm)])
             df[~df.index.duplicated(keep="last")].to_pickle(symbol)
 
     def update_all_crypto_1m(self) -> None:
