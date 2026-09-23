@@ -153,3 +153,5 @@ class CryptoBinance:
         with open('ffilled_crypto.pkl', 'wb') as fp:
             pickle.dump(dfs, fp)
 
+if __name__ == '__main__':
+    CryptoBinance().download_all_crypto_1m()
