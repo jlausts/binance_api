@@ -154,4 +154,4 @@ class CryptoBinance:
             pickle.dump(dfs, fp)
 
 if __name__ == '__main__':
-    CryptoBinance().download_all_crypto_1m()
+    CryptoBinance().download_all_crypto_1m('2012-01-01', all_symbols=True)
