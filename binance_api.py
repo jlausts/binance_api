@@ -114,8 +114,8 @@ class CryptoBinance:
                         'quote_volume': "float32", 'trades': 'uint32', 'taker_buy_volume': 'float32', 'taker_buy_quote_volume': 'float32'})
         return df[~df.index.duplicated(keep="last")]
 
-    def download_all_crypto_1m(self, start='2026-09-05') -> None:
-        for n, symbol in tqdm(list(enumerate(self.get_all_symbols(), 1))):
+    def download_all_crypto_1m(self, start='2026-09-05', all_symbols=False) -> None:
+        for n, symbol in tqdm(list(enumerate(self.get_all_symbols(all_symbols), 1))):
             if (self.output_folder / f'{symbol}.xz').exists(): continue
             self.download_one_ticker_1m(symbol, start, use_tqdm=False).to_pickle(self.output_folder / f'{symbol}.xz', compression="xz")
 
