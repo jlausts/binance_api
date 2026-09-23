@@ -11,14 +11,17 @@ class CryptoBinance:
         self.output_folder.mkdir(exist_ok=True)
         self.session = requests.Session()
 
-    def get_all_symbols(self):
+    def get_all_symbols(self, all_symbols=True):
         info = self.session.get(f"{self.base}/api/v3/exchangeInfo", timeout=30).json()
-        return [
-            x["symbol"]
-            for x in info["symbols"]
-            if x["status"] == "TRADING"
-            and x["quoteAsset"] == "USDT"
-        ]
+        if all_symbols:
+            return [x["symbol"] for x in info["symbols"] if x["quoteAsset"] == "USDT"]
+        else:
+            return [
+                x["symbol"]
+                for x in info["symbols"]
+                if x["status"] == "TRADING"
+                and x["quoteAsset"] == "USDT"
+            ]
 
     def download_one_ticker_1m(self, symbol: str = "BTCUSDT", start: str = "2026-09-05", use_tqdm=True) -> pd.DataFrame:
         url = "https://api.binance.com/api/v3/klines"
@@ -134,7 +137,7 @@ class CryptoBinance:
             if symbol.name.startswith('_'): return
             df = pd.read_pickle(symbol)
             start = df.iloc[-1].name.strftime('%Y-%m-%d')
-            df = pd.concat([df, self.download_one_ticker_1m(symbol.stem, start, use_tqdm=tqdm)])
+            df = pd.concat([df, self.download_one_ticker_1m(symbol.stem, start, use_tqdm=use_tqdm)])
             df[~df.index.duplicated(keep="last")].to_pickle(symbol)
 
     def update_all_crypto_1m(self) -> None:
