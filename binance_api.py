@@ -56,6 +56,8 @@ class CryptoBinance:
                     data = [i[:-1] for i in data.json()]
                     rows.extend(data)
                     last_ms = data[-1][0]
+                    if last_ms is None:
+                        return
 
                     bar.update(len(data))
                     bar.set_postfix_str(pd.to_datetime(last_ms, unit="ms", utc=True).strftime("%Y-%m-%d %H:%M"))
@@ -88,6 +90,8 @@ class CryptoBinance:
                 data = [i[:-1] for i in data.json()]
                 rows.extend(data)
                 last_ms = data[-1][0]
+                if last_ms is None:
+                    return
 
                 start_ms = last_ms + 60_000
 
@@ -117,7 +121,9 @@ class CryptoBinance:
     def download_all_crypto_1m(self, start='2026-09-05', all_symbols=False) -> None:
         for n, symbol in tqdm(list(enumerate(self.get_all_symbols(all_symbols), 1))):
             if (self.output_folder / f'{symbol}.xz').exists(): continue
-            self.download_one_ticker_1m(symbol, start, use_tqdm=False).to_pickle(self.output_folder / f'{symbol}.xz', compression="xz")
+            df = self.download_one_ticker_1m(symbol, start, use_tqdm=False)
+            if df is None: continue
+            df.to_pickle(self.output_folder / f'{symbol}.xz', compression="xz")
 
     def get_snapshot(self):
         joiner = '","'
